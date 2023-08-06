@@ -1,0 +1,164 @@
+Player: Nome e Cognome del Giocatore
+Nation: Nazionalità
+Pos: Ruolo di Gioco (GK = Portiere, DF = Difensore, MF = Centrocampista, FW = Attaccante)
+Squad: Squadra
+Comp: Campionato
+Age: Età
+Born: Anno di Nascita
+Season: Stagione cui fanno riferimento i dati
+
+Matches Played: Partite Giocate
+Minutes: Minuti Giocati
+Min/Match: Numero Medio di Minuti Giocati
+Player Min/Squad Min%:
+Min/90s: Minuti Giocati/90
+Starts: Partite giocate da Titolare
+Min/Start: Minuti Giocati/Partite da Titolare
+Completed Matches: Partite completate (90 minuti giocati)
+Subs: Partite giocate da Subentrato
+Min/Sub: Minuti Giocati/Partite da Subentrato
+unSub: Partite non giocate, nemmeno come Subentrato
+Points per Match: Punti Medi guadagnati dalla Squadra con il Giocatore in campo
+Goals Scored while on Pitch: Goal segnati dalla Squadra con il Giocatore in campo
+Goals Allowed while on Pitch: Goal subiti dalla Squadra con il Giocatore in campo
+Goal+/Goal-: Goal segnati - Goal subiti dalla Squadra con il Giocatore in campo
+Goal+/Goal-90: Goal segnati - Goal subiti dalla Squadra con il Giocatore in campo/90
+On-Off: Goal segnati dalla Squadra con il Giocatore in campo - Goal segnati dalla Squadra senza il Giocatore in campo
+xGS while on Pitch: Goal attesi dalla Squadra con il Giocatore in campo
+xGA while on Pitch: Goal subiti (attesi) dalla Squadra con il Giocatore in campo
+xG+/-: Goal attesi - Goal subiti (attesi) dalla Squadra con il Giocatore in campo
+xG+/-90: Goal attesi - Goal subiti (attesi) dalla Squadra con il Giocatore in campo
+xG On-Off: Goal segnati dalla Squadra con il Giocatore in campo - Goal segnati dalla Squadra senza il Giocatore in campo/90
+
+SCA: Azioni che hanno portato ad un Tiro
+SCA90: Azioni che hanno portato ad un Tiro/90
+SCA PassLive: Passaggi a palla viva completati che hanno portato ad un Tiro
+SCA PassDead: Passaggi a palla inattiva completati che hanno portato ad un Tiro
+SCA TO to Shot: Dribbling che hanno portato ad un Tiro
+SCA Shot to Shot: Tiri che hanno portato ad un Tiro
+SCA Foul Drawn to Shot: Falli subiti che hanno portato ad un Tiro
+SCA Def to Shot: Azioni difensive che hanno portato ad un Tiro
+GCA: Azioni che hanno portato ad un Goal
+GCA90: Azioni che hanno portato ad un Goal/90
+GCA PassLive: Passaggi a palla viva completati che hanno portato ad un Goal
+GCA PassDead: Passaggi a palla inattiva completati che hanno portato ad un Goal
+GCA TO to Shot: Dribbling che hanno portato ad un Goal
+GCA Shot to Shot: Tiri che hanno portato ad un Goal
+GCA Foul Drawn to Shot: Falli subiti che hanno portato ad un Goal
+GCA Def to Shot: Azioni difensive che hanno portato ad un Goal
+
+Y Crd: Ammonizioni
+R Crd: Espulsioni Dirette
+2Y Crd: Espulsioni per Doppia Ammonizione
+Fouls Committed: Falli commessi
+Fouls Drawn: Falli subiti
+Offsides: Fuorigioco
+Crosses: Cross
+Interceptions: Passaggi intercettati
+Tackles Won: Interventi effettuati con successo 
+PK Won: Rigori Conquistati
+PK Conceded: Rigori Concessi
+OG: Autogol
+Ball Recoveries: Palloni recuperati
+Aerial Duels Won: Duelli Aerei Vinti
+Aerial Duels Lost: Duelli Aerei Persi
+Aerial Duels Won%: Duelli Aerei Vinti in %
+
+Passes Completed: Passaggi Completati
+Passes Attempted: Passaggi Tentati
+Passes Completed%: Passaggi Completati in %
+Tot Pass Distance: Distanza Totale di Passaggio
+Progressive Pass Distance: Distanza Totale di Passaggio verso la Porta Avversaria
+Short Passes Completed: Passaggi Corti (5-15 yard) completati
+Short Passes Attempted: Passaggi Corti (5-15 yard) tentati
+Short Passes Completed%: Passaggi Corti (5-15 yard) completati in %
+Medium Passes Completed: Passaggi Medi (15-30 yard) completati
+Medium Passes Attempted: Passaggi Medi (15-30 yard) tentati
+Medium Passes Completed%: Passaggi Medi (15-30 yard) completati in %
+Long Passes Completed: Passaggi Lunghi (>30 yard) completati
+Long Passes Attempted: Passaggi Lunghi (>30 yard) tentati
+Long Passes Completed%: Passaggi Lunghi (>30 yard) completati in %
+
+Assists: Numero di Assist
+xAG: Goal Attesi preceduti da un Assist (Assisted Goals)
+xA: Assist Attesi
+A-xAG: Assist - Assisted Goals
+Key Passes: Passaggi seguiti da un Tiro
+Passes into Final Third: Passaggi completati con la Palla che entra nella Trequarti avversaria
+Passes into Penalty Area: Passaggi completati con la Palla che entra nell'Area avversaria
+Crosses into Penalty Area: Cross completati con la Palla che entra nell'Area avversaria
+Progressive Passes: Passaggi completati con la Palla che si muove verso la Porta avversaria
+Live Ball Passes: Passaggi a palla viva
+Dead Ball Passes: Passaggi a palla inattiva (punizioni, calci d'angolo, calci d'inizio, rimesse)
+Free Kick Passes: Passaggi da calcio di punizione
+Through Balls: Lanci effettuati
+Switches: Passaggi da >40 yard in larghezza sul Campo
+Throw-Ins: Rimesse laterali
+Corner Kicks: Calci d'Angolo
+Inswinging Corner Kicks: Calci d'Angolo ad entrare
+Outswinging Corner Kicks: Calci d'Angolo ad uscire
+Straight Corner Kicks: Calci d'Angolo tesi
+Offside Passes: Passaggi in Fuorigioco
+Passes Blocked by Opponents: Passaggi bloccati dagli Avversari.
+
+Touches: Tocchi di Palla
+Def Pen: Tocchi nella propria Area
+Def 3rd: Tocchi nella propria Trequarti Difensiva
+Mid 3rd: Tocchi a metà Campo
+Att 3rd: Tocchi nella Trequarti avversaria
+Att Pen: Tocchi nell'Area avversaria
+Live Ball Touches: Tocchi di Palla non inattiva
+Take-Ons Attempted: Dribbling tentati
+Take-Ons Successful: Dribbling riusciti
+Take-Ons Successful%: Dribbling riusciti in %
+Tackles during Take-On: Interventi effettuati su Dribbling avversario
+Tackled during Take-On: Interventi subiti durante un Dribbling
+Carries: Numero di volte in cui il Giocatore ha controllato la Palla con i propri Piedi
+Total Carries Distance: Distanza percorsa Palla al Piede
+Progressive Carries Distance: Distanza percorsa Palla al Piede verso la Porta Avversaria
+Progressive Carries: Numero di volte in cui il Giocatore ha portato la Palla con i Piedi verso la Porta Avversaria
+Carries into Final 1/3: Numero di volte in cui il Giocatore ha portato la Palla con i Piedi nella Trequarti avversaria
+Carries into Penalty Area: Numero di volte in cui il Giocatore ha portato la Palla con i Piedi nell'Area avversaria
+Miscontrols: Numero di volte in cui il Giocatore non è riuscito a controllare la Palla.
+Dispossessed: Numero di volte in cui il Giocatore ha perso il controllo della Palla.
+Passes Received: Passaggi Ricevuti
+Progressive Pass Received: Passaggi ricevuti verso la Porta Avversaria.
+
+Goals: Goal Segnati
+Shots: Tiri Effettuati
+Shots on Target: Tiri In Porta Effettuati
+Shots on Target%: Tiri in Porta Effettuati in %
+Shots/90: Tiri Effettuati/90
+Shots on Target/90: Tiri in Porta Effettuati/90
+G/Shot: Goal Segnati/Tiri Effettuati
+G/Shots on Target: Goal Segnati/Tiri in Porta Effettuati
+Average Shot Distance: Distanza Media di Tiro
+Free Kick Shots: Tiri da Calcio di Punizione
+PK Made: Rigori Segnati
+PK Attempted: Rigori Calciati
+xG: Goal Attesi (metrica di Opta)
+npxG: Goal Attesi non da Calcio di Rigore (metrica di Opta)
+npxG/Shot: Goal Attesi no Rigore/Tiri Effettuati
+G-xG: Goal Segnati - Goal Attesi
+npG-xG: Goal Segnati no Rigore - Goal Attesi
+G+A: Goal Segnati + Assist
+G-PK: Goal Segnati no Rigore
+npxG+xAG: Goal Attesi no Rigore
+G/90: Goal Segnati/90
+A/90: Assist/90
+G+A/90: Goal+Assist/90
+G-PK/90: Goal Segnati no Rigore/90
+G+A-PK/90: Goal Segnati no Rigore+Assist/90
+xG/90: Goal Attesi/90
+xAG/90: Assisted Goal Attesi/90
+xG+xAG/90: Goal Attesi + Assisted Goal Attesi/90
+npxG/90: Goal Attesi no Rigore/90
+npxG+xAG/90: Goal Attesi no Rigore + Assisted Goal Attesi/90
+
+
+
+
+
+
+
+
