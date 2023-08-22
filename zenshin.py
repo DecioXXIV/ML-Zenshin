@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import json
+import warnings
+warnings.filterwarnings("ignore")
 
 from datetime import datetime
 from sklearn.preprocessing import StandardScaler
@@ -43,7 +46,7 @@ class Zenshin():
         self.train_cl_model()
 
     def load_training_sets(self):
-        X_train = pd.read_csv("C:/Users/Riccardo De Cesaris/Desktop/Progetto ML x Football/Datasets/TOTAL/Train Set 1722.csv")
+        X_train = pd.read_csv("dataset/Training Set 1722.csv")
         X_train = X_train[["Player", "Pos", "Squad", "Age", "Season", "Goals", "xG", "Shots on Target", "Shots", "Att Pen", "Offsides",
                   "GCA", "Carries into Penalty Area", "PK Attempted", "PK Made", "Att 3rd", "GCA TO to Goal", "Take-Ons Attempted", "Take-Ons Successful",
                   "GCA Shot to Goal", "Goals Scored while on Pitch", "Carries into Final 1/3", "xGS while on Pitch", "Matches Played", "G/Shots on Target",
@@ -115,21 +118,72 @@ class Zenshin():
         
         return X_reg_dataset, y_reg_dataset
 
-    
+    def create_player_table(self, player_name):
+        features_dict = {
+                        "xG": 0, 
+                        "Shots on Target": 0, 
+                        "Shots": 0, 
+                        "Att Pen": 0, 
+                        "Offsides": 0,
+                        "GCA": 0, 
+                        "Carries into Penalty Area": 0, 
+                        "PK Attempted": 0, 
+                        "PK Made": 0, 
+                        "Att 3rd": 0, 
+                        "GCA TO to Goal": 0, 
+                        "Take-Ons Attempted": 0, 
+                        "Take-Ons Successful": 0,
+                        "GCA Shot to Goal": 0, 
+                        "Goals Scored while on Pitch": 0, 
+                        "Carries into Final 1/3": 0, 
+                        "xGS while on Pitch": 0, 
+                        "Matches Played": 0, 
+                        "G/Shots on Target": 0,
+                        "G/Shot": 0, 
+                        "Minutes": 0, 
+                        "Mid 3rd": 0, 
+                        "Def 3rd": 0, 
+                        "Def Pen": 0
+                        }
+        filepath = "predictions/" + f'{player_name}' + " Prediction.txt" 
+        json.dump(features_dict, open(filepath, "w"))
+
+        return filepath
+
     def predict(self, player_name):
         # Recupero dei "Vecchi Datapoint"
         old_neighbors = self.X_train[self.X_train["Player"] == player_name]
         if old_neighbors.shape[0] == 0:
             raise Exception("Non è possibile effettuare predizioni su un Giocatore di cui non si conosce la Carriera pregressa!")
         if self.verbose:
-            print("Ecco i \"vecchi datapoint\" del Giocatore di input:")
+            print("Ecco i \"vecchi datapoint\" del Giocatore di input:", end = '')
             with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.precision', 3):
                 display(old_neighbors)
         
-        vector = np.zeros((1, self.X_train_scaled.shape[1]))
+        stats_filepath = self.create_player_table(player_name)
 
-        ### TO DO: Struttura Grafica per l'inserimento dei Dati del Giocatore di Input ###
+        go_to_prediction = False
+        print("*** Inserisci nel file \'" + stats_filepath + "\' le statistiche per cui desideri la predizione: effettuata questa operazione, digita \"DONE\"")
+        while(go_to_prediction is False):
+            string = input()
+            if string == "DONE":
+                go_to_prediction = True
+        
+        features_dict = json.load(open(stats_filepath))
 
+        sot_perc = None
+        try:
+            sot_perc = features_dict["Shots on Target"]/(features_dict["Shots on Target"] + features_dict["Shots"])
+        except:
+            sot_perc = 0
+
+        sot_90 = features_dict["Shots on Target"]/90
+        shots_90 = features_dict["Shots on Target"]/90
+        features_dict["Shots on Target%"] = round(sot_perc, 2)
+        features_dict["Shots on Target/90"] = round(sot_90, 2)
+        features_dict["Shots/90"] = round(shots_90, 2)
+
+        vector = np.array(list(features_dict.values())).reshape((1, self.X_train_scaled.shape[1]))
         scaled_vector = self.scaler.transform(vector)
 
         X_reg_dataset, y_reg_dataset = self.build_regression_dataset(old_neighbors, scaled_vector)
@@ -158,6 +212,9 @@ class Zenshin():
         if goals_predicted < 0:
             print("*** Con i dati specificati, il Giocatore \"%s\" dovrebbe segnare 0 Goal nella Prossima Stagione.\n" % player_name)
             print("*** Attenzione! Il Modello ha in realtà predetto che il Giocatore segni %f Goal, ma ciò è (ovviamente) impossibile." % goals_predicted)
-            print("*** Considera questo risultato come indicatore di quanto lo stile di gioco specificato sia lontano dall'attitudine al Goal.")
+            print("*** Considera questo risultato come indicatore di quanto le statistiche specificate siano lontane dall'attitudine al Goal.")
         else:
             print("*** Con i dati specificati, il Giocatore \"%s\" dovrebbe segnare %f Goal nella Prossima Stagione." % (player_name, goals_predicted))
+        
+        with open(stats_filepath, "a") as f:
+            f.write("\n\nGoal Predetti: " + str(goals_predicted))
