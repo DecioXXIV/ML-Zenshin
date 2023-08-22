@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import json
 import warnings
 warnings.filterwarnings("ignore")
@@ -200,8 +199,6 @@ class Zenshin():
         self.reg_model.fit(X=X_reg_dataset, y=y_reg_dataset)
         end = datetime.now()
         print("*** Tempo impiegato per l'Addestramento del Modello di Regressione:", (end-start))
-
-        ### TO DO: Visualizzazione della Retta di Regressione, del Training Set e del Giocatore di Input (matplotlib) ###
         
         goals_predicted = None
         if isinstance(self.reg_model, Lasso):
