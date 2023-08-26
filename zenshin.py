@@ -14,10 +14,10 @@ from sklearn.model_selection import GridSearchCV
 
 class Zenshin():
     
-    def __init__(self, cl_model='KMeans', reg_model='Lasso', reg_nn = 100, verbose=True):
+    def __init__(self, cl_model='KMeans', reg_model='Lasso', verbose=True):
         self.cl_model = None
         self.reg_model = None
-        self.reg_nn = reg_nn
+        self.reg_nn = None
         self.verbose = verbose
         self.scaler = StandardScaler()
         self.X_train = None
@@ -60,6 +60,7 @@ class Zenshin():
                   "GCA Shot to Goal", "Goals Scored while on Pitch", "Carries into Final 1/3", "xGS while on Pitch", "Matches Played", "G/Shots on Target",
                    "G/Shot", "Minutes", "Shots on Target%", "Shots on Target/90", "Shots/90", "Mid 3rd", "Def 3rd", "Def Pen"]]
         self.X_train_scaled = self.scaler.fit_transform(self.X_train_to_scale)
+        self.reg_nn = round(3*np.sqrt(self.X_train_scaled.shape[0]))
 
         if self.verbose:
             print("*** Il Training Set, caricato con successo, ha le seguenti dimensioni:", self.X_train_scaled.shape)
@@ -81,6 +82,7 @@ class Zenshin():
             distances[i] = np.linalg.norm((scaled_vector-neighbor), ord=2)
         
         # Normalizzazione delle Distanze
+        distances = 1/distances
         sum = np.sum(distances)
         for i in range(0, len(distances)):
             distances[i] = distances[i] / sum
@@ -119,30 +121,33 @@ class Zenshin():
 
     def create_player_table(self, player_name):
         features_dict = {
-                        "xG": 0, 
-                        "Shots on Target": 0, 
-                        "Shots": 0, 
-                        "Att Pen": 0, 
-                        "Offsides": 0,
-                        "GCA": 0, 
-                        "Carries into Penalty Area": 0, 
-                        "PK Attempted": 0, 
-                        "PK Made": 0, 
-                        "Att 3rd": 0, 
-                        "GCA TO to Goal": 0, 
-                        "Take-Ons Attempted": 0, 
-                        "Take-Ons Successful": 0,
-                        "GCA Shot to Goal": 0, 
-                        "Goals Scored while on Pitch": 0, 
-                        "Carries into Final 1/3": 0, 
-                        "xGS while on Pitch": 0, 
-                        "Matches Played": 0, 
-                        "G/Shots on Target": 0,
-                        "G/Shot": 0, 
-                        "Minutes": 0, 
-                        "Mid 3rd": 0, 
-                        "Def 3rd": 0, 
-                        "Def Pen": 0
+                        "xG": [0], 
+                        "Shots on Target": [0], 
+                        "Shots": [0], 
+                        "Att Pen": [0], 
+                        "Offsides": [0],
+                        "GCA": [0], 
+                        "Carries into Penalty Area": [0], 
+                        "PK Attempted": [0], 
+                        "PK Made": [0], 
+                        "Att 3rd": [0], 
+                        "GCA TO to Goal": [0], 
+                        "Take-Ons Attempted": [0], 
+                        "Take-Ons Successful": [0],
+                        "GCA Shot to Goal": [0], 
+                        "Goals Scored while on Pitch": [0], 
+                        "Carries into Final 1/3": [0], 
+                        "xGS while on Pitch": [0], 
+                        "Matches Played": [0], 
+                        "G/Shots on Target": [0],
+                        "G/Shot": [0],
+                        "Minutes": [0],
+                        "Shots on Target%": [0],
+                        "Shots on Target/90": [0],
+                        "Shots/90": [0], 
+                        "Mid 3rd": [0], 
+                        "Def 3rd": [0], 
+                        "Def Pen": [0]
                         }
         filepath = "predictions/" + f'{player_name}' + " Prediction.txt" 
         json.dump(features_dict, open(filepath, "w"))
@@ -169,20 +174,7 @@ class Zenshin():
                 go_to_prediction = True
         
         features_dict = json.load(open(stats_filepath))
-
-        sot_perc = None
-        try:
-            sot_perc = features_dict["Shots on Target"]/(features_dict["Shots on Target"] + features_dict["Shots"])
-        except:
-            sot_perc = 0
-
-        sot_90 = features_dict["Shots on Target"]/90
-        shots_90 = features_dict["Shots on Target"]/90
-        features_dict["Shots on Target%"] = round(sot_perc, 2)
-        features_dict["Shots on Target/90"] = round(sot_90, 2)
-        features_dict["Shots/90"] = round(shots_90, 2)
-
-        vector = np.array(list(features_dict.values())).reshape((1, self.X_train_scaled.shape[1]))
+        vector = pd.DataFrame.from_dict(features_dict)
         scaled_vector = self.scaler.transform(vector)
 
         X_reg_dataset, y_reg_dataset = self.build_regression_dataset(old_neighbors, scaled_vector)
