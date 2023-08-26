@@ -152,5 +152,5 @@ cython_debug/
 #.idea/
 
 # Files
-.txt
-.xlsx
+predictions/*.txt
+roadmap/3 - Regressione/reports/*.xlsx
