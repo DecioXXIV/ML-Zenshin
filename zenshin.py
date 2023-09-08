@@ -8,44 +8,64 @@ from datetime import datetime
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.neighbors import NearestNeighbors
-from sklearn.cluster import KMeans, AgglomerativeClustering
+from sklearn.cluster import KMeans, AgglomerativeClustering, SpectralClustering
 from sklearn.linear_model import Ridge, Lasso
+from sklearn.svm import LinearSVR
 from sklearn.model_selection import GridSearchCV
 
 class Zenshin():
     
-    def __init__(self, cl_model='KMeans', reg_model='Lasso', verbose=True):
+    def __init__(self, mode=1, verbose=True):
         self.cl_model = None
         self.reg_model = None
+        self.desc = []
         self.reg_nn = None
         self.verbose = verbose
         self.scaler = StandardScaler()
         self.X_train = None
         self.X_train_to_scale = None
         self.X_train_scaled = None
-        
-        if cl_model == 'KMeans':
-            self.cl_model = KMeans(init="k-means++", n_init=2000, n_clusters=5, max_iter=50000)
-        elif cl_model == 'AgglomerativeClustering':
-            self.cl_model = AgglomerativeClustering(n_clusters=5)
-        else:
-            raise Exception("I possibili Modelli di Clustering sono: [KMeans, AgglomerativeClustering]")
 
-        if reg_model == 'Lasso':
+        if mode == 1: #KMeans + Lasso
+            self.cl_model = KMeans(init="k-means++", n_init=2000, n_clusters=5, max_iter=50000)
             self.reg_model = Lasso(tol=1e-5)
-        elif reg_model == 'Ridge':
-            self.reg_model = Ridge()
-        else:
-            raise Exception("I possibili Modelli di Regressione sono: [Lasso, Ridge]")
+        if mode == 2: #Spectral + Ridge
+            self.cl_model = SpectralClustering(n_clusters=5, affinity='nearest_neighbors', n_neighbors=100, assign_labels='kmeans', n_init=50)
+            self.reg_model = Ridge(solver="cholesky")
+        if mode == 3: #Spectral + Lasso
+            self.cl_model = SpectralClustering(n_clusters=5, affinity='nearest_neighbors', n_neighbors=100, assign_labels='kmeans', n_init=50)
+            self.reg_model = Lasso(tol=1e-5)
+        if mode == 4: #Agglomerative + Lasso
+            self.cl_model = AgglomerativeClustering(n_clusters=5)
+            self.reg_model = Lasso(tol=1e-5)
+        if mode == 5: #KMeans + LinearSVR
+            self.cl_model = KMeans(init="k-means++", n_init=2000, n_clusters=5, max_iter=50000)
+            self.reg_model = LinearSVR()
+        if mode == 6: #Spectral + LinearSVR
+            self.cl_model = SpectralClustering(n_clusters=5, affinity='nearest_neighbors', n_neighbors=100, assign_labels='kmeans', n_init=50)
+            self.reg_model = LinearSVR()
+        if mode == 7: #Agglomerative + LinearSVR
+            self.cl_model = AgglomerativeClustering(n_clusters=5)
+            self.reg_model = LinearSVR()
+        if mode >= 8 or mode <= 0:
+            raise Exception("I possibili modelli sono: " + str(list(range(0,8))))
+        
+        if isinstance(self.cl_model, KMeans):                     self.desc.append('KMeans')
+        if isinstance(self.cl_model, AgglomerativeClustering):    self.desc.append('Agglomerative Clustering')
+        if isinstance(self.cl_model, SpectralClustering):         self.desc.append('Spectral Clustering')
+        
+        if isinstance(self.reg_model, Ridge):                     self.desc.append('Ridge')
+        if isinstance(self.reg_model, Lasso):                     self.desc.append('Lasso')
+        if isinstance(self.reg_model, LinearSVR):                 self.desc.append('LinearSVR')
         
         print("Benvenuto in Zenshin.\n")
-        print("*** Il Sistema utilizzerà il Modello di Regressione \'%s\', supportato dal Modello di Clustering \'%s\'." % (reg_model, cl_model))
+        print("*** Il Sistema utilizzerà il Modello di Regressione \'%s\', supportato dal Modello di Clustering \'%s\'." % (self.desc[1], self.desc[0]))
+        
         self.load_training_sets()
-
         self.train_cl_model()
 
     def load_training_sets(self):
-        X_train = pd.read_csv("dataset/Training Set 1722.csv")
+        X_train = pd.read_csv("dataset/Training Set 1723.csv")
         X_train = X_train[["Player", "Pos", "Squad", "Age", "Season", "Goals", "xG", "Shots on Target", "Shots", "Att Pen", "Offsides",
                   "GCA", "Carries into Penalty Area", "PK Attempted", "PK Made", "Att 3rd", "GCA TO to Goal", "Take-Ons Attempted", "Take-Ons Successful",
                   "GCA Shot to Goal", "Goals Scored while on Pitch", "Carries into Final 1/3", "xGS while on Pitch", "Matches Played", "G/Shots on Target",
@@ -149,10 +169,36 @@ class Zenshin():
                         "Def 3rd": [0], 
                         "Def Pen": [0]
                         }
-        filepath = "predictions/" + f'{player_name}' + " Prediction.txt" 
+        filepath = "predictions/" + f'{player_name}' + " " + str(self.desc) + " Prediction.txt"
         json.dump(features_dict, open(filepath, "w"))
 
         return filepath
+    
+    def train_reg_model(self, X_reg_dataset, y_reg_dataset):
+        if isinstance(self.reg_model, Lasso) or isinstance(self.reg_model, Ridge):
+            hp = {'alpha': [1e-15,1e-10,1e-8,1e-3,1e-2,1,5,10,20,30,35,40,45,50,55,100]}
+            grid = GridSearchCV(self.reg_model, hp, scoring='neg_mean_squared_error', cv=5)
+            grid.fit(X=X_reg_dataset, y=y_reg_dataset)
+            
+            if isinstance(self.reg_model, Lasso):
+                self.reg_model = Lasso(alpha=grid.best_params_['alpha'], tol=1e-5)
+            if isinstance(self.reg_model, Ridge):
+                self.reg_model = Ridge(alpha=grid.best_params_['alpha'], solver='cholesky')
+        
+        if isinstance(self.reg_model, LinearSVR):
+            hp = {
+            'epsilon': [0.0, 0.1, 0.2, 0.3, 0.5],
+            'C': [0.1, 1, 10, 50, 100]
+            }
+            grid = GridSearchCV(self.reg_model, hp, scoring='neg_mean_squared_error', cv=5)
+            grid.fit(X=X_reg_dataset, y=y_reg_dataset)
+
+            self.reg_model = LinearSVR(C=grid.best_params_['C'], epsilon=grid.best_params_['epsilon'])
+        
+        start = datetime.now()
+        self.reg_model.fit(X=X_reg_dataset, y=y_reg_dataset)
+        end = datetime.now()
+        print("*** Tempo impiegato per l'Addestramento del Modello di Regressione:", (end-start))
 
     def predict(self, player_name):
         # Recupero dei "Vecchi Datapoint"
@@ -178,22 +224,11 @@ class Zenshin():
         scaled_vector = self.scaler.transform(vector)
 
         X_reg_dataset, y_reg_dataset = self.build_regression_dataset(old_neighbors, scaled_vector)
-        
-        hp = {'alpha': [1e-15,1e-10,1e-8,1e-3,1e-2,1,5,10,20,30,35,40,45,50,55,100]}
-        grid = GridSearchCV(self.reg_model, hp, scoring='neg_mean_squared_error', cv=5)
-        grid.fit(X=X_reg_dataset, y=y_reg_dataset)
-        if isinstance(self.reg_model, Lasso):
-            self.reg_model = Lasso(alpha=grid.best_params_['alpha'], tol=1e-5)
-        else:
-            self.reg_model = Ridge(alpha=grid.best_params_['alpha'])
-        
-        start = datetime.now()
-        self.reg_model.fit(X=X_reg_dataset, y=y_reg_dataset)
-        end = datetime.now()
-        print("*** Tempo impiegato per l'Addestramento del Modello di Regressione:", (end-start))
+
+        self.train_reg_model(X_reg_dataset, y_reg_dataset)
         
         goals_predicted = None
-        if isinstance(self.reg_model, Lasso):
+        if isinstance(self.reg_model, Lasso) or isinstance(self.reg_model, LinearSVR):
             goals_predicted = self.reg_model.predict(scaled_vector)[0]
         else:
             goals_predicted = self.reg_model.predict(scaled_vector)[0][0]
